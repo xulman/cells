@@ -59,17 +59,16 @@ def is_pixel_at_cell_border(image: ndarray, pixel: Coords, val: int, size: Image
     max_z -= 1
     x, y, z = pixel
 
-    # On the border of image
+    # On the border of image:
     if x == 0 or x == max_x or y == 0 or y == max_y or z == 0 or z == max_z:
         return True
-    # On the border of object
-    if (image[z][y][x + 1] != val
-            or image[z][y][x - 1] != val
-            or image[z][y + 1][x] != val
-            or image[z][y - 1][x] != val
-            or image[z + 1][y][x] != val
-            or image[z - 1][y][x] != val):
-        return True
+
+    # On the border of object:
+    # offsets to the neighbors [[dx,dy,dz],[dx,dy,dz],...]; dx stands for "delta in x"
+    neigs = [[0,0,-1], [0,-1,0], [-1,0,0], [1,0,0], [0,1,0], [0,0,1]]
+    for dx,dy,dz in neigs:
+        if image[z+dz][y+dy][x+dx] != val:
+            return True
     return False
 
 
