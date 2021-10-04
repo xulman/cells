@@ -27,7 +27,7 @@ def main():
     cumul_coords = {}
     cells = {}
 
-    image = imread('./data/masks.tif')
+    image = imread('./data/masks_3D.tif')
     size = len(image[0][0]), len(image[0]), len(image)
     for z in range(len(image)):
         print(f"processing layer {z}")
