@@ -38,7 +38,7 @@ def main():
                     # volume
                     volume[value] = volume.get(value, 0) + 1
                     # surface
-                    if check_on_side(image, (x, y, z), value, size):
+                    if is_pixel_at_cell_border(image, (x, y, z), value, size):
                         surface[value] = surface.get(value, 0) + 1
                     # cumulative_coords
                     coords = cumul_coords.get(value, (0, 0, 0))
@@ -51,8 +51,8 @@ def main():
         print(cells[label])
 
 
-# Desides if pixel is on the side of object (6-connectivity)
-def check_on_side(image: ndarray, pixel: Coords, val: int, size: ImageSize):
+# Decides if the pixel is on the border of the object (6-connectivity)
+def is_pixel_at_cell_border(image: ndarray, pixel: Coords, val: int, size: ImageSize):
     max_x, max_y, max_z = size
     max_x -= 1
     max_y -= 1
