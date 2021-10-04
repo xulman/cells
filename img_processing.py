@@ -15,6 +15,8 @@ class Cell:
         self.surface = surface
         self.centroid = centroid
         #https://www.sciencedirect.com/science/article/pii/S1877750318304757
+        # FIXME: this is most likely only for 3D...
+        # FIXME: either calculate outside, or pass 2D/3D flag inside here
         self.sphericity = numpy.cbrt(36 * numpy.pi * (volume ** 2)) / surface
 
     def __str__(self):
@@ -28,6 +30,7 @@ def main():
     cells = {}
 
     image = imread('./data/masks_3D.tif')
+    # FIXME: wrap 'image' with a 3D version with 3rd dim of len() = 1
     size = len(image[0][0]), len(image[0]), len(image)
     for z in range(len(image)):
         print(f"processing layer {z}")
@@ -60,6 +63,8 @@ def is_pixel_at_cell_border(image: ndarray, pixel: Coords, val: int, size: Image
     x, y, z = pixel
 
     # On the border of image:
+    # FIXME: will be always true for 2D images...
+    # FIXME: create two main branches here, one for 2D an for 3D
     if x == 0 or x == max_x or y == 0 or y == max_y or z == 0 or z == max_z:
         return True
 
