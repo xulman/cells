@@ -195,19 +195,26 @@ def find_borders_3D_v3(img,img_data,neigh_list):
 	# assumes img is large enough!
 	# (so that maxX remains a strictly-positive integer)
 	maxZ,maxY,maxX = img.shape
-	maxX -= neigh_rad+neigh_rad
-	maxY -= neigh_rad+neigh_rad
-	maxZ -= neigh_rad+neigh_rad
-	# NB: shortens each dim by the "border zone" of the neighs
+
+	# this determines inner region in which it is safe to sweep
+	minOffset = neigh_rad*maxY*maxX + neigh_rad*maxX + neigh_rad
+	maxOffset = len(img_data) - minOffset
+	print("sweep offsets: "+str(minOffset)+" -> "+str(maxOffset))
 
 	borderPxs = 0
-	doff = neigh_offsets[0]
-	print("doing for offset: "+str(doff))
 	idx = 0
-	for a,b,c in zip(img_data[-doff:], img_data[40000:], img_data):
-		borderPxs += a+b+c
+	# assumes there are exactly 6 neighbors!
+	for v,a,b,c,d,e,f in zip(img_data[minOffset:maxOffset], \
+	                         img_data[minOffset+neigh_offsets[0]:], \
+	                         img_data[minOffset+neigh_offsets[1]:], \
+	                         img_data[minOffset+neigh_offsets[2]:], \
+	                         img_data[minOffset+neigh_offsets[3]:], \
+	                         img_data[minOffset+neigh_offsets[4]:], \
+	                         img_data[minOffset+neigh_offsets[5]:]):
+		borderPxs += 1 if 6*v == a+b+c+d+e+f else 0
 		idx += 1
 
+	print("visited pixels: "+str(idx))
 	return borderPxs
 
 
