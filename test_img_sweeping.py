@@ -211,7 +211,7 @@ def find_borders_3D_v3(img,img_data,neigh_list):
 	                         img_data[minOffset+neigh_offsets[3]:], \
 	                         img_data[minOffset+neigh_offsets[4]:], \
 	                         img_data[minOffset+neigh_offsets[5]:]):
-		borderPxs += 1 if 6*v == a+b+c+d+e+f else 0
+		borderPxs += v + a+b+c+d+e+f
 		idx += 1
 
 	print("visited pixels: "+str(idx))
