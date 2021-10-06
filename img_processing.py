@@ -15,6 +15,8 @@ class Cell:
         self.surface = surface
         self.centroid = centroid
         #https://www.sciencedirect.com/science/article/pii/S1877750318304757
+        # FIXME: this is most likely only for 3D...
+        # FIXME: either calculate outside, or pass 2D/3D flag inside here
         self.sphericity = numpy.cbrt(36 * numpy.pi * (volume ** 2)) / surface
 
     def __str__(self):
@@ -27,7 +29,8 @@ def main():
     cumul_coords = {}
     cells = {}
 
-    image = imread('./data/masks.tif')
+    image = imread('./data/masks_3D.tif')
+    # FIXME: wrap 'image' with a 3D version with 3rd dim of len() = 1
     size = len(image[0][0]), len(image[0]), len(image)
     for z in range(len(image)):
         print(f"processing layer {z}")
@@ -38,7 +41,7 @@ def main():
                     # volume
                     volume[value] = volume.get(value, 0) + 1
                     # surface
-                    if check_on_side(image, (x, y, z), value, size):
+                    if is_pixel_at_cell_border(image, (x, y, z), value, size):
                         surface[value] = surface.get(value, 0) + 1
                     # cumulative_coords
                     coords = cumul_coords.get(value, (0, 0, 0))
@@ -51,25 +54,26 @@ def main():
         print(cells[label])
 
 
-# Desides if pixel is on the side of object (6-connectivity)
-def check_on_side(image: ndarray, pixel: Coords, val: int, size: ImageSize):
+# Decides if the pixel is on the border of the object (6-connectivity)
+def is_pixel_at_cell_border(image: ndarray, pixel: Coords, val: int, size: ImageSize):
     max_x, max_y, max_z = size
     max_x -= 1
     max_y -= 1
     max_z -= 1
     x, y, z = pixel
 
-    # On the border of image
+    # On the border of image:
+    # FIXME: will be always true for 2D images...
+    # FIXME: create two main branches here, one for 2D an for 3D
     if x == 0 or x == max_x or y == 0 or y == max_y or z == 0 or z == max_z:
         return True
-    # On the border of object
-    if (image[z][y][x + 1] != val
-            or image[z][y][x - 1] != val
-            or image[z][y + 1][x] != val
-            or image[z][y - 1][x] != val
-            or image[z + 1][y][x] != val
-            or image[z - 1][y][x] != val):
-        return True
+
+    # On the border of object:
+    # offsets to the neighbors [[dx,dy,dz],[dx,dy,dz],...]; dx stands for "delta in x"
+    neigs = [[0,0,-1], [0,-1,0], [-1,0,0], [1,0,0], [0,1,0], [0,0,1]]
+    for dx,dy,dz in neigs:
+        if image[z+dz][y+dy][x+dx] != val:
+            return True
     return False
 
 
