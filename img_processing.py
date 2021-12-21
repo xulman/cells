@@ -22,7 +22,6 @@ def read_cells() -> dict[int, Cell]:
         image = [image]
     size = len(image[0][0]), len(image[0]), len(image)
     for z in range(len(image)):
-        print(f"processing layer {z}/{size[2] - 1}")
         for y in range(len(image[0])):
             for x in range(len(image[0][0])):
                 value = image[z][y][x]
