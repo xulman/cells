@@ -15,7 +15,7 @@ class Cell:
         self.roundness: float
         if is3d:
             # https://www.sciencedirect.com/science/article/pii/S1877750318304757
-            self.roundness = numpy.cbrt(36 * numpy.pi * (volume ** 2)) / surface_pixels
+            self.roundness = numpy.cbrt(36 * numpy.pi * (volume ** 2)) / len(surface_pixels)
         else:
             self.roundness = (4 * numpy.pi * volume) / (len(surface_pixels) ** 2)
 
