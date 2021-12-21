@@ -6,13 +6,13 @@ from distance_calculating import calculate_distances
 
 
 def main():
+    was = datetime.datetime.now()
     print("Processing image")
     cells: dict[int, Cell] = read_cells('./data/masks_3D.tif')
     # for key in cells.keys():
     #     print(cells[key])
     distances: dict[int, dict[int, int]]
     print("Calculating distances")
-    was = datetime.datetime.now()
     distances = calculate_distances(cells)
     # for key in distances.keys():
     #     print(distances[key])
