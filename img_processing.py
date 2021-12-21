@@ -16,7 +16,8 @@ def read_cells() -> dict[int, Cell]:
     cells: dict[int, Cell] = {}
 
     image = imread('./data/masks_3D.tif')
-    is3d = type(image[0][0]) == numpy.ndarray
+    image = image.tolist()
+    is3d = type(image[0][0]) == list
     if not is3d:
         image = [image]
     size = len(image[0][0]), len(image[0]), len(image)
