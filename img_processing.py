@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 import numpy
 from tifffile import imread
 from typing import Tuple
@@ -8,8 +10,8 @@ ImageSize = Tuple[int, int, int]
 
 
 def read_cells() -> dict[int, Cell]:
-    volume: dict[int, int] = {}
-    surface: dict[int, int] = {}
+    volume: dict[int, int] = defaultdict(int)
+    surface_pixels: dict[int, list[Coords]] = defaultdict(list)
     cumul_coords: dict[int, Coords] = {}
     cells: dict[int, Cell] = {}
 
@@ -25,10 +27,10 @@ def read_cells() -> dict[int, Cell]:
                 value = image[z][y][x]
                 if value != 0:
                     # volume
-                    volume[value] = volume.get(value, 0) + 1
+                    volume[value] += 1
                     # surface
                     if is_pixel_at_cell_border(image, (x, y, z), value, size):
-                        surface[value] = surface.get(value, 0) + 1
+                        surface_pixels[value].append((x, y, z))
                     # cumulative_coords
                     coords = cumul_coords.get(value, (0, 0, 0))
                     cumul_coords[value] = coords[0] + x, coords[1] + y, coords[2] + z
@@ -36,7 +38,7 @@ def read_cells() -> dict[int, Cell]:
         obj_volume = volume[label]
         coords = cumul_coords[label]
         centroid = round(coords[0] / obj_volume), round(coords[1] / obj_volume), round(coords[2] / obj_volume)
-        cells[label] = Cell(label, obj_volume, surface[label], centroid, is3d)
+        cells[label] = Cell(label, obj_volume, surface_pixels[label], centroid, is3d)
     return cells
 
 
