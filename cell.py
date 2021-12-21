@@ -1,8 +1,6 @@
-from typing import Tuple
-
 import numpy
 
-Coords = Tuple[int, int, int]
+Coords = tuple[int, int, int]
 
 
 class Cell:

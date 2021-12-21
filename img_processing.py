@@ -2,11 +2,10 @@ from collections import defaultdict
 
 import numpy
 from tifffile import imread
-from typing import Tuple
 
 from cell import Cell, Coords
 
-ImageSize = Tuple[int, int, int]
+ImageSize = tuple[int, int, int]
 
 
 def read_cells() -> dict[int, Cell]:
