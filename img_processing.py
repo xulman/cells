@@ -1,6 +1,5 @@
 from collections import defaultdict
 
-import numpy
 from tifffile import imread
 
 from cell import Cell
@@ -9,13 +8,13 @@ from utils import Coords
 ImageSize = tuple[int, int, int]
 
 
-def read_cells() -> dict[int, Cell]:
+def read_cells(image_address) -> dict[int, Cell]:
     volume: dict[int, int] = defaultdict(int)
     surface_pixels: dict[int, list[Coords]] = defaultdict(list)
     cumul_coords: dict[int, Coords] = {}
     cells: dict[int, Cell] = {}
 
-    image = imread('./data/masks_3D.tif')
+    image = imread(image_address)
     image = image.tolist()
     is3d = type(image[0][0]) == list
     if not is3d:
@@ -43,7 +42,7 @@ def read_cells() -> dict[int, Cell]:
 
 
 # Decides if the pixel is on the border of the object (6-connectivity)
-def is_pixel_at_cell_border(image: numpy.ndarray, pixel: Coords, val: int, size: ImageSize):
+def is_pixel_at_cell_border(image: list[list[list[int]]], pixel: Coords, val: int, size: ImageSize):
     max_x, max_y, max_z = size
     max_x -= 1
     max_y -= 1

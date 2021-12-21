@@ -7,15 +7,15 @@ from distance_calculating import calculate_distances
 
 def main():
     print("Processing image")
-    cells: dict[int, Cell] = read_cells()
-    for key in cells.keys():
-        print(cells[key])
+    cells: dict[int, Cell] = read_cells('./data/masks_3D.tif')
+    # for key in cells.keys():
+    #     print(cells[key])
     distances: dict[int, dict[int, int]]
     print("Calculating distances")
     was = datetime.datetime.now()
     distances = calculate_distances(cells)
-    for key in distances.keys():
-        print(distances[key])
+    # for key in distances.keys():
+    #     print(distances[key])
     print(datetime.datetime.now()-was)
 
 

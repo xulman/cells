@@ -1,5 +1,3 @@
-from collections import defaultdict
-
 from cell import Cell, Coords
 
 from utils import distance
@@ -22,8 +20,8 @@ def distance_between_cells(fst: Cell, snd: Cell) -> int:
     for pixel in snd.surface_pixels:
         if distance(pixel, fst.centroid) <= snd_compare_distance:
             snd_border.append(pixel)
-    if len(fst_border) < 500 or len(snd_border) < 500:
-        print(f"{fst.label} border: {len(fst_border)}, {snd.label} border: {len(snd_border)}, distance between {centroid_distance}")
+    # if len(fst_border) < 500 or len(snd_border) < 500:
+    #     print(f"{fst.label} border: {len(fst_border)}, {snd.label} border: {len(snd_border)}, distance between {centroid_distance}")
     min_distance = centroid_distance
     for fst_pixel in fst_border[::3]:
         for snd_pixel in snd_border[::3]:
