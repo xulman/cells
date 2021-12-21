@@ -2,34 +2,16 @@ import numpy
 from tifffile import imread
 from typing import Tuple
 
-from numpy import ndarray
+from cell import Cell, Coords
 
-Coords = Tuple[int, int, int]
 ImageSize = Tuple[int, int, int]
 
 
-class Cell:
-    def __init__(self, label, volume, surface, centroid: Coords, is3d):
-        self.label = label
-        self.volume = volume
-        self.surface = surface
-        self.centroid = centroid
-        self.is3d = is3d
-        if is3d:
-            # https://www.sciencedirect.com/science/article/pii/S1877750318304757
-            self.roundness = numpy.cbrt(36 * numpy.pi * (volume ** 2)) / surface
-        else:
-            self.roundness = (4 * numpy.pi * volume) / (surface ** 2)
-
-    def __str__(self):
-        return f"Cell label: {self.label}, volume: {self.volume}, border pixels: {self.surface}, centroid: {self.centroid}, roundness: {self.roundness}"
-
-
-def main():
-    volume = {}
-    surface = {}
-    cumul_coords = {}
-    cells = {}
+def read_cells() -> dict[int, Cell]:
+    volume: dict[int, int] = {}
+    surface: dict[int, int] = {}
+    cumul_coords: dict[int, Coords] = {}
+    cells: dict[int, Cell] = {}
 
     image = imread('./data/masks_3D.tif')
     is3d = type(image[0][0]) == numpy.ndarray
@@ -55,11 +37,11 @@ def main():
         coords = cumul_coords[label]
         centroid = round(coords[0] / obj_volume), round(coords[1] / obj_volume), round(coords[2] / obj_volume)
         cells[label] = Cell(label, obj_volume, surface[label], centroid, is3d)
-        print(cells[label])
+    return cells
 
 
 # Decides if the pixel is on the border of the object (6-connectivity)
-def is_pixel_at_cell_border(image: ndarray, pixel: Coords, val: int, size: ImageSize):
+def is_pixel_at_cell_border(image: numpy.ndarray, pixel: Coords, val: int, size: ImageSize):
     max_x, max_y, max_z = size
     max_x -= 1
     max_y -= 1
@@ -79,8 +61,3 @@ def is_pixel_at_cell_border(image: ndarray, pixel: Coords, val: int, size: Image
         if image[z + dz][y + dy][x + dx] != val:
             return True
     return False
-
-
-if __name__ == "__main__":
-    main()
-    print("Finished")
