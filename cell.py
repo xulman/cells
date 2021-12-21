@@ -1,6 +1,6 @@
 import numpy
 
-Coords = tuple[int, int, int]
+from utils import distance, Coords
 
 
 class Cell:
@@ -16,6 +16,15 @@ class Cell:
             self.roundness = numpy.cbrt(36 * numpy.pi * (volume ** 2)) / len(surface_pixels)
         else:
             self.roundness = (4 * numpy.pi * volume) / (len(surface_pixels) ** 2)
+        self.avg_radius: float = compute_avg_radius(centroid, surface_pixels)
+
 
     def __str__(self):
         return f"Cell label: {self.label}, volume: {self.volume}, border pixels: {len(self.surface_pixels)}, centroid: {self.centroid}, roundness: {self.roundness}"
+
+
+def compute_avg_radius(centroid: Coords, surface_pixels: list[Coords]) -> float:
+    distance_sum = 0
+    for pixel in surface_pixels:
+        distance_sum += distance(centroid, pixel)
+    return distance_sum / len(surface_pixels)

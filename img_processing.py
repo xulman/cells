@@ -3,7 +3,8 @@ from collections import defaultdict
 import numpy
 from tifffile import imread
 
-from cell import Cell, Coords
+from cell import Cell
+from utils import Coords
 
 ImageSize = tuple[int, int, int]
 

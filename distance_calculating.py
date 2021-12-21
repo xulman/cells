@@ -1,9 +1,6 @@
 from cell import Cell, Coords
-import math
 
-
-def distance(fst: Coords, snd: Coords) -> float:
-    return math.sqrt((fst[0]-snd[0]) ** 2 + (fst[1]-snd[1]) ** 2 + (fst[2]-snd[2]) ** 2)
+from utils import distance
 
 
 def distance_between_cells(fst: Cell, snd: Cell) -> int:
@@ -11,9 +8,8 @@ def distance_between_cells(fst: Cell, snd: Cell) -> int:
     centroid_distance = distance(fst.centroid, snd.centroid)
     fst_border: list[Coords] = []
     snd_border: list[Coords] = []
-    fst_compare_distance = centroid_distance
-
-    snd_compare_distance = centroid_distance
+    fst_compare_distance = centroid_distance - fst.avg_radius * (1 / (fst.roundness + 0.1) ** 2)
+    snd_compare_distance = centroid_distance - snd.avg_radius * (1 / (snd.roundness + 0.1) ** 2)
 
     # cutting pixels that are too far to be closest
     for pixel in fst.surface_pixels:
