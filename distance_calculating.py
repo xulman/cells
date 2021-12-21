@@ -1,3 +1,6 @@
+from numba import jit
+from numba.typed import List
+
 from cell import Cell, Coords
 
 from utils import distance
@@ -6,8 +9,8 @@ from utils import distance
 def distance_between_cells(fst: Cell, snd: Cell) -> int:
     # If cell #1 is less round - farther pixels of cell #2 should be taken, and other way
     centroid_distance = distance(fst.centroid, snd.centroid)
-    fst_border: list[Coords] = []
-    snd_border: list[Coords] = []
+    fst_border: list[Coords] = List()
+    snd_border: list[Coords] = List()
     # magic happens here
     modifier = 0.15 if centroid_distance > (fst.avg_radius * 2) and centroid_distance > (snd.avg_radius * 2) else 0.30
     fst_compare_distance = centroid_distance - fst.avg_radius * (1 / ((fst.roundness + modifier) ** 3))
@@ -22,14 +25,21 @@ def distance_between_cells(fst: Cell, snd: Cell) -> int:
             snd_border.append(pixel)
     # if len(fst_border) < 500 or len(snd_border) < 500:
     #     print(f"{fst.label} border: {len(fst_border)}, {snd.label} border: {len(snd_border)}, distance between {centroid_distance}")
+    min_distance = distance_between_borders(fst_border, snd_border, centroid_distance)
+
+
+    return round(min_distance)
+
+
+@jit
+def distance_between_borders(fst_border: List[Coords], snd_border: List[Coords], centroid_distance):
     min_distance = centroid_distance
     for fst_pixel in fst_border[::3]:
         for snd_pixel in snd_border[::3]:
             dist = distance(fst_pixel, snd_pixel)
             if dist < min_distance:
                 min_distance = dist
-
-    return round(min_distance)
+    return min_distance
 
 
 def distance_to_each_cell(main_cell: Cell, cells: dict[int, Cell], distances: dict[int, dict[int, int]]) -> None:
