@@ -1,9 +1,10 @@
+from math import sqrt
 from numba import jit
 from numba.typed import List
 
 from cell import Cell, Coords
 
-from utils import distance
+from utils import distance, distance_sq
 
 
 def distance_between_cells(fst: Cell, snd: Cell) -> int:
@@ -40,6 +41,16 @@ def distance_between_borders(fst_border: List[Coords], snd_border: List[Coords],
             if dist < min_distance:
                 min_distance = dist
     return min_distance
+
+@jit
+def distance_between_borders_sq(fst_border: List[Coords], snd_border: List[Coords], centroid_distance):
+    min_distance_sq = centroid_distance*centroid_distance
+    for fst_pixel in fst_border[::3]:
+        for snd_pixel in snd_border[::3]:
+            dist_sq = distance_sq(fst_pixel, snd_pixel)
+            if dist_sq < min_distance_sq:
+                min_distance_sq = dist_sq
+    return sqrt(min_distance_sq)
 
 
 def distance_to_each_cell(main_cell: Cell, cells: dict[int, Cell], distances: dict[int, dict[int, int]]) -> None:
