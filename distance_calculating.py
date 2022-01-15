@@ -27,6 +27,16 @@ def distance_between_cells(fst: Cell, snd: Cell) -> int:
     min_distance = distance_between_contours(fst_border, snd_border, centroid_distance)
 
 
+    #comparison test:
+    optCalcs = len(fst_border)*len(snd_border)
+    gtCalcs  = len(fst.surface_pixels)*len(snd.surface_pixels)
+    print(f"{fst.label}-{snd.label}: {optCalcs} rounds for optimized version")
+    print(f"{fst.label}-{snd.label}: {gtCalcs} rounds for GT")
+    print(f"{fst.label}-{snd.label}: reduction to {100*optCalcs/gtCalcs} % of GT")
+    #
+    gt_min_distance = distance_between_contours(fst.surface_pixels, snd.surface_pixels, centroid_distance)
+    print(f"{fst.label}-{snd.label}: dist diff: {min_distance-gt_min_distance} pixels")
+
     return round(min_distance)
 
 
