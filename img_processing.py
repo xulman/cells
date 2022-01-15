@@ -13,10 +13,11 @@ def read_cells(image_address) -> CellsStore:
     is3d = type(image[0][0]) == list
     if not is3d:
         image = [image]
+
     size = len(image[0][0]), len(image[0]), len(image)
-    for z in range(len(image)):
-        for y in range(len(image[0])):
-            for x in range(len(image[0][0])):
+    for z in range(size[2]):
+        for y in range(size[1]):
+            for x in range(size[0]):
                 value = image[z][y][x]
                 if value != 0:
                     # volume
