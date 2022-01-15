@@ -1,18 +1,12 @@
 from collections import defaultdict
-
 from tifffile import imread
-
-from cell import Cell
-from utils import Coords
-
-ImageSize = tuple[int, int, int]
+from cell import Cell, CellsStore, ImageSize, Coords
 
 
-def read_cells(image_address) -> dict[int, Cell]:
+def read_cells(image_address) -> CellsStore:
     volume: dict[int, int] = defaultdict(int)
     surface_pixels: dict[int, list[Coords]] = defaultdict(list)
     cumul_coords: dict[int, Coords] = {}
-    cells: dict[int, Cell] = {}
 
     image = imread(image_address)
     image = image.tolist()
@@ -33,6 +27,8 @@ def read_cells(image_address) -> dict[int, Cell]:
                     # cumulative_coords
                     coords = cumul_coords.get(value, (0, 0, 0))
                     cumul_coords[value] = coords[0] + x, coords[1] + y, coords[2] + z
+
+    cells: CellsStore = {}
     for label in volume:
         obj_volume = volume[label]
         coords = cumul_coords[label]

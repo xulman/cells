@@ -1,9 +1,7 @@
 from math import sqrt
 from numba import jit
 from numba.typed import List
-
-from cell import Cell, Coords
-
+from cell import Cell, CellsStore, Coords, DistFromOneCell, DistMatrix
 from utils import distance, distance_sq
 
 
@@ -53,8 +51,8 @@ def distance_between_borders_sq(fst_border: List[Coords], snd_border: List[Coord
     return sqrt(min_distance_sq)
 
 
-def distance_to_each_cell(main_cell: Cell, cells: dict[int, Cell], distances: dict[int, dict[int, int]]) -> None:
-    distances[main_cell.label]: dict[int, int] = {}
+def distance_to_each_cell(main_cell: Cell, cells: CellsStore, distances: DistMatrix) -> None:
+    distances[main_cell.label]: DistFromOneCell = {}
     for label, cell in cells.items():
         if label == main_cell.label:
             continue
@@ -64,8 +62,8 @@ def distance_to_each_cell(main_cell: Cell, cells: dict[int, Cell], distances: di
         distances[main_cell.label][label] = distance_between_cells(main_cell, cell)
 
 
-def calculate_distances(cells: dict[int, Cell]):
-    distances: dict[int, dict[int, int]] = {}
+def calculate_distances(cells: CellsStore):
+    distances: DistMatrix = {}
     for label, cell in cells.items():
         distance_to_each_cell(cell, cells, distances)
     return distances

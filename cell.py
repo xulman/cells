@@ -1,6 +1,13 @@
 import numpy
 
-from utils import distance, Coords
+# reference types
+ImageSize = tuple[int, int, int]
+Coords = tuple[int, int, int]
+DistFromOneCell = dict[int, int]
+DistMatrix = dict[int, DistFromOneCell]
+#CellsStore type is defined below (after the class itself)
+
+from utils import distance
 
 
 class Cell:
@@ -28,3 +35,7 @@ def compute_avg_radius(centroid: Coords, surface_pixels: list[Coords]) -> float:
     for pixel in surface_pixels:
         distance_sum += distance(centroid, pixel)
     return distance_sum / len(surface_pixels)
+
+
+# one more reference type
+CellsStore = dict[int, Cell]

@@ -1,7 +1,6 @@
 from math import sqrt
 from numba import jit
-Coords = tuple[int, int, int]
-
+from cell import Coords
 
 @jit
 def distance(fst: Coords, snd: Coords) -> float:
