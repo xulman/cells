@@ -1,7 +1,7 @@
 import datetime
 from cell import Cell, CellsStore, DistMatrix
 from img_processing import read_cells
-from distance_calculating import calculate_distances
+from distance_calculating import calculate_all_mutual_distances
 
 
 def main():
@@ -12,9 +12,7 @@ def main():
     #     print(cells[key])
     distances: dict[int, dict[int, int]]
     print("Calculating distances")
-    distances: DistMatrix = calculate_distances(cells)
-    # for key in distances.keys():
-    #     print(distances[key])
+    distances: DistMatrix = calculate_all_mutual_distances(cells)
     print(datetime.datetime.now()-was)
 
 

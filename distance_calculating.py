@@ -24,14 +24,14 @@ def distance_between_cells(fst: Cell, snd: Cell) -> int:
             snd_border.append(pixel)
     # if len(fst_border) < 500 or len(snd_border) < 500:
     #     print(f"{fst.label} border: {len(fst_border)}, {snd.label} border: {len(snd_border)}, distance between {centroid_distance}")
-    min_distance = distance_between_borders(fst_border, snd_border, centroid_distance)
+    min_distance = distance_between_contours(fst_border, snd_border, centroid_distance)
 
 
     return round(min_distance)
 
 
 @jit
-def distance_between_borders(fst_border: List[Coords], snd_border: List[Coords], centroid_distance):
+def distance_between_contours(fst_border: list[Coords], snd_border: list[Coords], centroid_distance):
     min_distance = centroid_distance
     for fst_pixel in fst_border[::3]:
         for snd_pixel in snd_border[::3]:
@@ -41,7 +41,7 @@ def distance_between_borders(fst_border: List[Coords], snd_border: List[Coords],
     return min_distance
 
 @jit
-def distance_between_borders_sq(fst_border: List[Coords], snd_border: List[Coords], centroid_distance):
+def distance_between_contours_sq(fst_border: list[Coords], snd_border: list[Coords], centroid_distance):
     min_distance_sq = centroid_distance*centroid_distance
     for fst_pixel in fst_border[::3]:
         for snd_pixel in snd_border[::3]:
@@ -51,19 +51,20 @@ def distance_between_borders_sq(fst_border: List[Coords], snd_border: List[Coord
     return sqrt(min_distance_sq)
 
 
-def distance_to_each_cell(main_cell: Cell, cells: CellsStore, distances: DistMatrix) -> None:
-    distances[main_cell.label]: DistFromOneCell = {}
+def distance_to_other_cells(ref_cell: Cell, cells: CellsStore, distances: DistMatrix) -> None:
+    distances[ref_cell.label]: DistFromOneCell = {}
     for label, cell in cells.items():
-        if label == main_cell.label:
+        if label == ref_cell.label:
+            distances[label][label] = -1
             continue
         if label in distances:  # was computed before
-            distances[main_cell.label][label] = distances[label][main_cell.label]
+            distances[ref_cell.label][label] = distances[label][ref_cell.label]
             continue
-        distances[main_cell.label][label] = distance_between_cells(main_cell, cell)
+        distances[ref_cell.label][label] = distance_between_cells(ref_cell, cell)
 
 
-def calculate_distances(cells: CellsStore):
+def calculate_all_mutual_distances(cells: CellsStore):
     distances: DistMatrix = {}
-    for label, cell in cells.items():
-        distance_to_each_cell(cell, cells, distances)
+    for cell in cells.values():
+        distance_to_other_cells(cell, cells, distances)
     return distances
