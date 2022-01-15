@@ -1,7 +1,7 @@
 from math import sqrt
 from numba import jit
 from numba.typed import List
-from cell import Cell, CellsStore, Coords, DistFromOneCell, DistMatrix
+from cell import Cell, CellsStore, Coords, DistancesToCells, DistMatrix
 from utils import distance, distance_sq
 
 
@@ -52,15 +52,16 @@ def distance_between_contours_sq(fst_border: list[Coords], snd_border: list[Coor
 
 
 def distance_to_other_cells(ref_cell: Cell, cells: CellsStore, distances: DistMatrix) -> None:
-    distances[ref_cell.label]: DistFromOneCell = {}
+    distances[ref_cell.label]: DistancesToCells = {}
     for label, cell in cells.items():
-        if label == ref_cell.label:
-            distances[label][label] = -1
+        if label == ref_cell.label: # don't store the distance to itself
             continue
-        if label in distances:  # was computed before
-            distances[ref_cell.label][label] = distances[label][ref_cell.label]
+        if label in distances: # was computed before?
+            for dist,id in distances[label].items():
+                if id == ref_cell.label:
+                    distances[ref_cell.label][dist] = label
             continue
-        distances[ref_cell.label][label] = distance_between_cells(ref_cell, cell)
+        distances[ref_cell.label][ distance_between_cells(ref_cell, cell) ] = label
 
 
 def calculate_all_mutual_distances(cells: CellsStore):

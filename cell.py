@@ -3,8 +3,9 @@ import numpy
 # reference types
 ImageSize = tuple[int, int, int]
 Coords = tuple[int, int, int]
-DistFromOneCell = dict[int, int]
-DistMatrix = dict[int, DistFromOneCell]
+DistFromOneCell = dict[int, int]  # id -> distance
+DistancesToCells = dict[int, int] # distance -> id
+DistMatrix = dict[int, DistancesToCells]
 #CellsStore type is defined below (after the class itself)
 
 from utils import distance
