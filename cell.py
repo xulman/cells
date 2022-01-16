@@ -3,6 +3,7 @@ import numpy
 # reference types
 ImageSize = tuple[int, int, int]
 Coords = tuple[int, int, int]
+PixelList = list[Coords]
 DistFromOneCell = dict[int, int]  # id -> distance
 DistancesToCells = dict[int, int] # distance -> id
 DistMatrix = dict[int, DistancesToCells]

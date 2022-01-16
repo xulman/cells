@@ -1,11 +1,10 @@
 from math import sqrt
 from numba import jit
 from numba.typed import List
-from cell import Cell, CellsStore, Coords, DistancesToCells, DistMatrix
+from cell import Cell, CellsStore, Coords, PixelList, DistancesToCells, DistMatrix
 from utils import distance, distance_sq
 
-
-def distance_between_cells(fst: Cell, snd: Cell) -> int:
+def get_border_pixels_between_cells(fst: Cell, snd: Cell) -> tuple[PixelList, PixelList]:
     # If cell #1 is less round - farther pixels of cell #2 should be taken, and other way
     centroid_distance = distance(fst.centroid, snd.centroid)
     fst_border: list[Coords] = List()
@@ -24,8 +23,18 @@ def distance_between_cells(fst: Cell, snd: Cell) -> int:
             snd_border.append(pixel)
     # if len(fst_border) < 500 or len(snd_border) < 500:
     #     print(f"{fst.label} border: {len(fst_border)}, {snd.label} border: {len(snd_border)}, distance between {centroid_distance}")
-    min_distance = distance_between_contours(fst_border, snd_border, centroid_distance)
+    return fst_border, snd_border
 
+
+def get_full_border_pixels_between_cells(fst: Cell, snd: Cell) -> tuple[PixelList, PixelList]:
+    return fst.surface_pixels, snd.surface_pixels
+
+
+def distance_between_cells(fst: Cell, snd: Cell) -> int:
+    centroid_distance = distance(fst.centroid, snd.centroid)
+
+    fst_border, snd_border = get_border_pixels_between_cells(fst, snd)
+    min_distance = distance_between_contours(fst_border, snd_border, centroid_distance)
 
     #comparison test:
     optCalcs = len(fst_border)*len(snd_border)
