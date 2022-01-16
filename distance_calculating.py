@@ -1,14 +1,14 @@
 from math import sqrt
 from numba import jit
 from numba.typed import List
-from cell import Cell, CellsStore, Coords, PixelList, DistancesToCells, DistMatrix
+from cell import Cell, CellsStore, Coords, PixelNativeList, PixelNumbaList, DistancesToCells, DistMatrix
 from utils import distance, distance_sq
 
-def get_border_pixels_between_cells(fst: Cell, snd: Cell) -> tuple[PixelList, PixelList]:
+def get_border_pixels_between_cells(fst: Cell, snd: Cell) -> tuple[PixelNumbaList, PixelNumbaList]:
     # If cell #1 is less round - farther pixels of cell #2 should be taken, and other way
     centroid_distance = distance(fst.centroid, snd.centroid)
-    fst_border: list[Coords] = List()
-    snd_border: list[Coords] = List()
+    fst_border: PixelNumbaList = List()
+    snd_border: PixelNumbaList = List()
     # magic happens here
     modifier = 0.15 if centroid_distance > (fst.avg_radius * 2) and centroid_distance > (snd.avg_radius * 2) else 0.30
     fst_compare_distance = centroid_distance - fst.avg_radius * (1 / ((fst.roundness + modifier) ** 3))
@@ -26,8 +26,15 @@ def get_border_pixels_between_cells(fst: Cell, snd: Cell) -> tuple[PixelList, Pi
     return fst_border, snd_border
 
 
-def get_full_border_pixels_between_cells(fst: Cell, snd: Cell) -> tuple[PixelList, PixelList]:
-    return fst.surface_pixels, snd.surface_pixels
+def get_full_border_pixels_between_cells(fst: Cell, snd: Cell) -> tuple[PixelNumbaList, PixelNumbaList]:
+    # re-packs into Numba list (to avoid Numba compiler warnings...)
+    if fst.surface_pixels_numba is None:
+        fst.surface_pixels_numba = List()
+        [ fst.surface_pixels_numba.append(x) for x in fst.surface_pixels ]
+    if snd.surface_pixels_numba is None:
+        snd.surface_pixels_numba = List()
+        [ snd.surface_pixels_numba.append(x) for x in snd.surface_pixels ]
+    return fst.surface_pixels_numba, snd.surface_pixels_numba
 
 
 def distance_between_cells(fst: Cell, snd: Cell) -> int:
@@ -43,14 +50,15 @@ def distance_between_cells(fst: Cell, snd: Cell) -> int:
     print(f"{fst.label}-{snd.label}: {gtCalcs} rounds for GT")
     print(f"{fst.label}-{snd.label}: reduction to {100*optCalcs/gtCalcs} % of GT")
     #
-    gt_min_distance = distance_between_contours(fst.surface_pixels, snd.surface_pixels, centroid_distance)
+    fst_border, snd_border = get_full_border_pixels_between_cells(fst, snd)
+    gt_min_distance = distance_between_contours(fst_border, snd_border, centroid_distance)
     print(f"{fst.label}-{snd.label}: dist diff: {min_distance-gt_min_distance} pixels")
 
     return round(min_distance)
 
 
 @jit
-def distance_between_contours(fst_border: list[Coords], snd_border: list[Coords], centroid_distance):
+def distance_between_contours(fst_border: PixelNumbaList, snd_border: PixelNumbaList, centroid_distance):
     min_distance = centroid_distance
     for fst_pixel in fst_border[::3]:
         for snd_pixel in snd_border[::3]:
@@ -60,7 +68,7 @@ def distance_between_contours(fst_border: list[Coords], snd_border: list[Coords]
     return min_distance
 
 @jit
-def distance_between_contours_sq(fst_border: list[Coords], snd_border: list[Coords], centroid_distance):
+def distance_between_contours_sq(fst_border: PixelNumbaList, snd_border: PixelNumbaList, centroid_distance):
     min_distance_sq = centroid_distance*centroid_distance
     for fst_pixel in fst_border[::3]:
         for snd_pixel in snd_border[::3]:

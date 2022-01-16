@@ -1,9 +1,11 @@
 import numpy
+from numba.typed import List
 
 # reference types
 ImageSize = tuple[int, int, int]
 Coords = tuple[int, int, int]
-PixelList = list[Coords]
+PixelNativeList = list[Coords]
+PixelNumbaList = List[Coords]
 DistFromOneCell = dict[int, int]  # id -> distance
 DistancesToCells = dict[int, int] # distance -> id
 DistMatrix = dict[int, DistancesToCells]
@@ -13,10 +15,11 @@ from utils import distance
 
 
 class Cell:
-    def __init__(self, label: int, volume: int, surface_pixels: list[Coords], centroid: Coords, is3d: bool):
+    def __init__(self, label: int, volume: int, surface_pixels: PixelNativeList, centroid: Coords, is3d: bool):
         self.label: int = label
         self.volume: int = volume
-        self.surface_pixels: list[Coords] = surface_pixels
+        self.surface_pixels: PixelNativeList = surface_pixels
+        self.surface_pixels_numba: PixelNumbaList = None # filled on-demand
         self.centroid: Coords = centroid
         self.is3d: bool = is3d
         self.roundness: float
@@ -32,7 +35,7 @@ class Cell:
         return f"Cell label: {self.label}, volume: {self.volume}, border pixels: {len(self.surface_pixels)}, centroid: {self.centroid}, roundness: {self.roundness}"
 
 
-def compute_avg_radius(centroid: Coords, surface_pixels: list[Coords]) -> float:
+def compute_avg_radius(centroid: Coords, surface_pixels: PixelNativeList) -> float:
     distance_sum = 0
     for pixel in surface_pixels:
         distance_sum += distance(centroid, pixel)
