@@ -3,7 +3,7 @@ from cell import Cell, CellsStore, DistancesToCells, DistMatrix
 from img_processing import read_cells
 from distance_calculating import calculate_all_mutual_distances
 
-def printDistancesFromCell(dist : DistancesToCells):
+def print_distances_from_cell(dist : DistancesToCells):
     for d in sorted(dist):
         print(f" -> after {d} pixels is cell id {dist[d]}")
 
@@ -21,9 +21,10 @@ def main():
     distances: DistMatrix = calculate_all_mutual_distances(cells)
     print(datetime.datetime.now()-t2)
 
+    # REPORTING
     refCellLabel = 25
     print(f"distance from cell id {refCellLabel}:")
-    printDistancesFromCell(distances[refCellLabel])
+    print_distances_from_cell(distances[refCellLabel])
 
 
 if __name__ == "__main__":
