@@ -42,5 +42,33 @@ def compute_avg_radius(centroid: Coords, surface_pixels: PixelNativeList) -> flo
     return distance_sum / len(surface_pixels)
 
 
+def points_on_circle(centre: Coords, radius: float, value: int, img: numpy.ndarray):
+    _,Y,X = img.shape
+    print(f"value {value} with centre {centre}, radius {radius}")
+    # bounding box
+    cx,cy,_ = centre
+    min_x = max(int(cx-radius), 0)
+    min_y = max(int(cy-radius), 0)
+    max_x = min(int(cx+radius), X-1)
+    max_y = min(int(cy+radius), Y-1)
+    print(f"sweeping box {min_x},{min_y} -> {max_x},{max_y}")
+    # for detecing circle boundary
+    delta = 0.7
+    radius_sq_min = (radius-delta)**2
+    radius_sq_max = (radius+delta)**2
+    # the drawing itself
+    for y in range(min_y,max_y+1):
+        ry = (y-cy)**2
+        for x in range(min_x,max_x+1):
+            r = (x-cx)**2 + ry
+            if radius_sq_min < r < radius_sq_max:
+                img[0][y][x] = value
+
+
+def points_on_sphere(centre: Coords, radius: float, value: int, img: numpy.ndarray):
+    #TBA... for now:
+    points_on_circle(centre,radius,value,img)
+
+
 # one more reference type
 CellsStore = dict[int, Cell]
