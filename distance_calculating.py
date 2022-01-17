@@ -23,6 +23,8 @@ def get_border_pixels_between_cells(fst: Cell, snd: Cell) -> tuple[PixelNumbaLis
             snd_border.append(pixel)
     # if len(fst_border) < 500 or len(snd_border) < 500:
     #     print(f"{fst.label} border: {len(fst_border)}, {snd.label} border: {len(snd_border)}, distance between {centroid_distance}")
+    print(f"dist between cells {fst.label}-{snd.label}:")
+    print(f" -> considering pixels {len(fst_border)} and {len(snd_border)}")
     return fst_border, snd_border
 
 

@@ -32,7 +32,16 @@ class Cell:
 
 
     def __str__(self):
-        return f"Cell label: {self.label}, volume: {self.volume}, border pixels: {len(self.surface_pixels)}, centroid: {self.centroid}, roundness: {self.roundness}"
+        return f"Cell label: {self.label}, volume: {self.volume}, border pixels: {len(self.surface_pixels)}"\
+            f", centroid: {self.centroid}, roundness: {self.roundness}, avg.radius: {self.avg_radius}"
+
+    def visualize(self, image: numpy.ndarray):
+        if self.is3d:
+            points_on_sphere(self.centroid, 3, self.label, image)                 # centre
+            points_on_sphere(self.centroid, self.avg_radius, self.label, image)   # radius
+        else:
+            points_on_circle(self.centroid, 3, self.label, image)
+            points_on_circle(self.centroid, self.avg_radius, self.label, image)
 
 
 def compute_avg_radius(centroid: Coords, surface_pixels: PixelNativeList) -> float:
