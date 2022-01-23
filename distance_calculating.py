@@ -1,8 +1,11 @@
 from math import sqrt
+
 from numba import jit
 from numba.typed import List
-from cell import Cell, CellsStore, Coords, PixelNativeList, PixelNumbaList, DistancesToCells, DistMatrix
+
+from cell import Cell, CellsStore, PixelNumbaList, DistancesToCells, DistMatrix
 from utils import distance, distance_sq
+
 
 def get_border_pixels_between_cells(fst: Cell, snd: Cell) -> tuple[PixelNumbaList, PixelNumbaList]:
     # If cell #1 is less round - farther pixels of cell #2 should be taken, and other way
@@ -32,10 +35,10 @@ def get_full_border_pixels_between_cells(fst: Cell, snd: Cell) -> tuple[PixelNum
     # re-packs into Numba list (to avoid Numba compiler warnings...)
     if fst.surface_pixels_numba is None:
         fst.surface_pixels_numba = List()
-        [ fst.surface_pixels_numba.append(x) for x in fst.surface_pixels ]
+        [fst.surface_pixels_numba.append(x) for x in fst.surface_pixels]
     if snd.surface_pixels_numba is None:
         snd.surface_pixels_numba = List()
-        [ snd.surface_pixels_numba.append(x) for x in snd.surface_pixels ]
+        [snd.surface_pixels_numba.append(x) for x in snd.surface_pixels]
     return fst.surface_pixels_numba, snd.surface_pixels_numba
 
 
@@ -45,16 +48,16 @@ def distance_between_cells(fst: Cell, snd: Cell) -> int:
     fst_border, snd_border = get_border_pixels_between_cells(fst, snd)
     min_distance = distance_between_contours(fst_border, snd_border, centroid_distance)
 
-    #comparison test:
-    optCalcs = len(fst_border)*len(snd_border)
-    gtCalcs  = len(fst.surface_pixels)*len(snd.surface_pixels)
+    # comparison test:
+    optCalcs = len(fst_border) * len(snd_border)
+    gtCalcs = len(fst.surface_pixels) * len(snd.surface_pixels)
     print(f"{fst.label}-{snd.label}: {optCalcs} rounds for optimized version")
     print(f"{fst.label}-{snd.label}: {gtCalcs} rounds for GT")
-    print(f"{fst.label}-{snd.label}: reduction to {100*optCalcs/gtCalcs} % of GT")
+    print(f"{fst.label}-{snd.label}: reduction to {100 * optCalcs / gtCalcs} % of GT")
     #
     fst_border, snd_border = get_full_border_pixels_between_cells(fst, snd)
     gt_min_distance = distance_between_contours(fst_border, snd_border, centroid_distance)
-    print(f"{fst.label}-{snd.label}: dist diff: {min_distance-gt_min_distance} pixels")
+    print(f"{fst.label}-{snd.label}: dist diff: {min_distance - gt_min_distance} pixels")
 
     return round(min_distance)
 
@@ -69,9 +72,10 @@ def distance_between_contours(fst_border: PixelNumbaList, snd_border: PixelNumba
                 min_distance = dist
     return min_distance
 
+
 @jit
 def distance_between_contours_sq(fst_border: PixelNumbaList, snd_border: PixelNumbaList, centroid_distance):
-    min_distance_sq = centroid_distance*centroid_distance
+    min_distance_sq = centroid_distance * centroid_distance
     for fst_pixel in fst_border[::3]:
         for snd_pixel in snd_border[::3]:
             dist_sq = distance_sq(fst_pixel, snd_pixel)
@@ -83,14 +87,14 @@ def distance_between_contours_sq(fst_border: PixelNumbaList, snd_border: PixelNu
 def distance_to_other_cells(ref_cell: Cell, cells: CellsStore, distances: DistMatrix) -> None:
     distances[ref_cell.label]: DistancesToCells = {}
     for label, cell in cells.items():
-        if label == ref_cell.label: # don't store the distance to itself
+        if label == ref_cell.label:  # don't store the distance to itself
             continue
-        if label in distances: # was computed before?
-            for dist,id in distances[label].items():
-                if id == ref_cell.label:
+        if label in distances:  # was computed before?
+            for dist, cell_id in distances[label].items():
+                if cell_id == ref_cell.label:
                     distances[ref_cell.label][dist] = label
             continue
-        distances[ref_cell.label][ distance_between_cells(ref_cell, cell) ] = label
+        distances[ref_cell.label][distance_between_cells(ref_cell, cell)] = label
 
 
 def calculate_all_mutual_distances(cells: CellsStore):
