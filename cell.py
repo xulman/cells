@@ -1,10 +1,9 @@
 import numpy
 from numba.typed import List
-from utils import distance
+from utils import distance, Coords
 
 # reference types
 ImageSize = tuple[int, int, int]
-Coords = tuple[int, int, int]
 PixelNativeList = list[Coords]
 PixelNumbaList = List[Coords]
 DistFromOneCell = dict[int, int]  # id -> distance

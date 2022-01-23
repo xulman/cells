@@ -1,6 +1,8 @@
 from math import sqrt
 from numba import jit
-from cell import Coords
+
+
+Coords = tuple[int, int, int]
 
 
 @jit
