@@ -1,1 +1,4 @@
 .*.sw?
+*.dat
+*.log
+__pycache__
