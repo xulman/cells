@@ -21,7 +21,7 @@ def write_boundaries(pixels: PixelNativeList, label: int, img: ndarray):
 def main_main():
     t1 = datetime.datetime.now()
     print("Pre-processing image")
-    cells: CellsStore = read_cells('./data/masks_2D.tif')
+    cells: CellsStore = read_cells('./data/masks_3D.tif')
     for key in sorted(cells.keys()):
         print(cells[key])
 
@@ -40,7 +40,7 @@ def main_main():
     # SHOWING
     otherCellLabel = 36
     rl, ol = get_border_pixels_between_cells(cells[refCellLabel], cells[otherCellLabel])
-    img = zeros((100, 200, 250), dtype=uint8)
+    img = zeros((100, 200, 300), dtype=uint8)
     write_boundaries(rl, refCellLabel, img)
     write_boundaries(ol, otherCellLabel, img)
     imsave(f"border_{refCellLabel}-{otherCellLabel}.tif", data=img)
