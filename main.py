@@ -21,7 +21,7 @@ def write_boundaries(pixels: PixelNativeList, label: int, img: ndarray):
 def main_main():
     t1 = datetime.datetime.now()
     print("Pre-processing image")
-    cells: CellsStore = read_cells('./data/masks_3D_small.tif')
+    cells: CellsStore = read_cells('./data/masks_2D.tif')
     for key in sorted(cells.keys()):
         print(cells[key])
 

@@ -53,10 +53,10 @@ def distance_between_cells(fst: Cell, snd: Cell) -> int:
     print(f"{fst.label}-{snd.label}: {gtCalcs} rounds for GT")
     print(f"{fst.label}-{snd.label}: reduction to {100 * optCalcs / gtCalcs} % of GT")
     #
-    fst_border, snd_border = get_full_border_pixels_between_cells(fst, snd)
+    fst_border_full, snd_border_full = get_full_border_pixels_between_cells(fst, snd)
     print(f"dist between cells {fst.label}-{snd.label}:")
-    print(f" -> considering pixels {len(fst_border)} and {len(snd_border)}")
-    gt_min_distance = distance_between_contours(fst_border, snd_border, centroid_distance)
+    print(f" -> considering pixels {len(fst_border_full)} and {len(snd_border_full)}")
+    gt_min_distance = distance_between_contours(fst_border_full, snd_border_full, centroid_distance)
     print(f"{fst.label}-{snd.label}: dist diff: {min_distance - gt_min_distance} pixels")
 
     return round(min_distance)

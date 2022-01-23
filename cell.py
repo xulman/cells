@@ -25,7 +25,7 @@ class Cell:
             # https://www.sciencedirect.com/science/article/pii/S1877750318304757
             self.roundness = numpy.cbrt(36 * numpy.pi * (volume ** 2)) / len(surface_pixels)
         else:
-            self.roundness = (4 * numpy.pi * volume) / (len(surface_pixels) ** 2)
+            self.roundness = max(1, (len(surface_pixels) ** 2)/ (4 * numpy.pi * volume))
         self.avg_radius: float = compute_avg_radius(centroid, surface_pixels)
 
     def __str__(self):
