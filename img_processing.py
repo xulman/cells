@@ -15,7 +15,7 @@ def read_cells(image_address) -> CellsStore:
         image = [image]
 
     size = len(image[0][0]), len(image[0]), len(image)
-    print(size)
+    print(f"Image size: {size}")
     for z in range(size[2]):
         for y in range(size[1]):
             for x in range(size[0]):

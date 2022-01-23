@@ -26,8 +26,6 @@ def get_border_pixels_between_cells(fst: Cell, snd: Cell) -> tuple[PixelNumbaLis
             snd_border.append(pixel)
     # if len(fst_border) < 500 or len(snd_border) < 500:
     #     print(f"{fst.label} border: {len(fst_border)}, {snd.label} border: {len(snd_border)}, distance between {centroid_distance}")
-    print(f"dist between cells {fst.label}-{snd.label}:")
-    print(f" -> considering pixels {len(fst_border)} and {len(snd_border)}")
     return fst_border, snd_border
 
 
@@ -56,6 +54,8 @@ def distance_between_cells(fst: Cell, snd: Cell) -> int:
     print(f"{fst.label}-{snd.label}: reduction to {100 * optCalcs / gtCalcs} % of GT")
     #
     fst_border, snd_border = get_full_border_pixels_between_cells(fst, snd)
+    print(f"dist between cells {fst.label}-{snd.label}:")
+    print(f" -> considering pixels {len(fst_border)} and {len(snd_border)}")
     gt_min_distance = distance_between_contours(fst_border, snd_border, centroid_distance)
     print(f"{fst.label}-{snd.label}: dist diff: {min_distance - gt_min_distance} pixels")
 
