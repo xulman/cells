@@ -4,14 +4,13 @@ from numpy import uint8, ndarray, zeros
 from tifffile.tifffile import imsave
 from case_study import CaseStudy, load_case_study, store_case_study
 
-from cell import CellsStore, DistancesToCellsWithEnergies, DistMatrix, PixelNativeList
+from cell import CellsStore, CellsToDistancesWithEnergies, DistMatrix, PixelNativeList
 from distance_calculating import calculate_all_mutual_distances, get_border_pixels_between_cells
 from img_processing import read_cells
 
-
-def print_distances_from_cell(dist: DistancesToCellsWithEnergies):
-    for d in sorted(dist):
-        print(f" -> after {d} pixels is cell id {dist[d][0]}, measurement price {dist[d][1]}")
+def print_distances_from_cell(dist: CellsToDistancesWithEnergies):
+    for d in sorted(dist, key=lambda k: dist[k][0]):
+        print(f" -> after {dist[d][0]} pixels is cell id {d}, measurement price {dist[d][1]}")
 
 def print_distances_matrix(dists: DistMatrix):
     for cell_id,dist in dists.items():

@@ -3,7 +3,7 @@ from math import sqrt
 from numba import jit
 from numba.typed import List
 
-from cell import Cell, CellsStore, PixelNumbaList, DistMatrix, DistancesToCellsWithEnergies, CellAndEnergy
+from cell import Cell, CellsStore, PixelNumbaList, DistMatrix, CellsToDistancesWithEnergies, DistanceAndEnergy
 from utils import distance, distance_sq
 
 
@@ -62,14 +62,14 @@ def distance_between_cells(fst: Cell, snd: Cell) -> int:
     return round(min_distance)
 
 
-def distance_opt_between_cells(fst: Cell, snd: Cell) -> CellAndEnergy:
+def distance_opt_between_cells(fst: Cell, snd: Cell) -> DistanceAndEnergy:
     centroid_distance = distance(fst.centroid, snd.centroid)
     fst_border, snd_border = get_border_pixels_between_cells(fst, snd)
     opt_min_distance,E = distance_between_contours(fst_border, snd_border, centroid_distance)
     return round(opt_min_distance),E
 
 
-def distance_gt_between_cells(fst: Cell, snd: Cell) -> CellAndEnergy:
+def distance_gt_between_cells(fst: Cell, snd: Cell) -> DistanceAndEnergy:
     centroid_distance = distance(fst.centroid, snd.centroid)
     fst_border, snd_border = get_full_border_pixels_between_cells(fst, snd)
     gt_min_distance,E = distance_between_contours(fst_border, snd_border, centroid_distance)
@@ -77,7 +77,7 @@ def distance_gt_between_cells(fst: Cell, snd: Cell) -> CellAndEnergy:
 
 
 @jit
-def distance_between_contours(fst_border: PixelNumbaList, snd_border: PixelNumbaList, centroid_distance, skip_step: int = 3) -> CellAndEnergy:
+def distance_between_contours(fst_border: PixelNumbaList, snd_border: PixelNumbaList, centroid_distance, skip_step: int = 3) -> DistanceAndEnergy:
     min_distance = centroid_distance
     fst_b = fst_border[::skip_step]
     snd_b = snd_border[::skip_step]
@@ -90,7 +90,7 @@ def distance_between_contours(fst_border: PixelNumbaList, snd_border: PixelNumba
 
 
 @jit
-def distance_between_contours_sq(fst_border: PixelNumbaList, snd_border: PixelNumbaList, centroid_distance, skip_step: int = 3) -> CellAndEnergy:
+def distance_between_contours_sq(fst_border: PixelNumbaList, snd_border: PixelNumbaList, centroid_distance, skip_step: int = 3) -> DistanceAndEnergy:
     min_distance_sq = centroid_distance * centroid_distance
     fst_b = fst_border[::skip_step]
     snd_b = snd_border[::skip_step]
@@ -103,18 +103,16 @@ def distance_between_contours_sq(fst_border: PixelNumbaList, snd_border: PixelNu
 
 
 def distance_to_other_cells(ref_cell: Cell, cells: CellsStore, distances: DistMatrix, do_full_gt: bool = False) -> None:
-    distances[ref_cell.label]: DistancesToCellsWithEnergies = {}
+    distances[ref_cell.label]: CellsToDistancesWithEnergies = {}
     for label, cell in cells.items():
         if label == ref_cell.label:  # don't store the distance to itself
             continue
         if label in distances:  # was computed before?
-            for dist, cell_and_energy in distances[label].items():
-                if cell_and_energy[0] == ref_cell.label:
-                    distances[ref_cell.label][dist] = (label,cell_and_energy[1])
+            distances[ref_cell.label][label] = distances[label][ref_cell.label]
             continue
         dist,E = distance_opt_between_cells(ref_cell, cell) if not do_full_gt \
             else distance_gt_between_cells(ref_cell, cell)
-        distances[ref_cell.label][dist] = (label,E)
+        distances[ref_cell.label][label] = (dist,E)
 
 
 def calculate_all_mutual_distances(cells: CellsStore, do_full_gt: bool = False):
