@@ -62,6 +62,20 @@ def distance_between_cells(fst: Cell, snd: Cell) -> int:
     return round(min_distance)
 
 
+def distance_opt_between_cells(fst: Cell, snd: Cell) -> int:
+    centroid_distance = distance(fst.centroid, snd.centroid)
+    fst_border, snd_border = get_border_pixels_between_cells(fst, snd)
+    opt_min_distance = distance_between_contours(fst_border, snd_border, centroid_distance)
+    return round(opt_min_distance)
+
+
+def distance_gt_between_cells(fst: Cell, snd: Cell) -> int:
+    centroid_distance = distance(fst.centroid, snd.centroid)
+    fst_border, snd_border = get_full_border_pixels_between_cells(fst, snd)
+    gt_min_distance = distance_between_contours(fst_border, snd_border, centroid_distance)
+    return round(gt_min_distance)
+
+
 @jit
 def distance_between_contours(fst_border: PixelNumbaList, snd_border: PixelNumbaList, centroid_distance):
     min_distance = centroid_distance
@@ -84,7 +98,7 @@ def distance_between_contours_sq(fst_border: PixelNumbaList, snd_border: PixelNu
     return sqrt(min_distance_sq)
 
 
-def distance_to_other_cells(ref_cell: Cell, cells: CellsStore, distances: DistMatrix) -> None:
+def distance_to_other_cells(ref_cell: Cell, cells: CellsStore, distances: DistMatrix, do_full_gt: bool = False) -> None:
     distances[ref_cell.label]: DistancesToCells = {}
     for label, cell in cells.items():
         if label == ref_cell.label:  # don't store the distance to itself
@@ -94,11 +108,13 @@ def distance_to_other_cells(ref_cell: Cell, cells: CellsStore, distances: DistMa
                 if cell_id == ref_cell.label:
                     distances[ref_cell.label][dist] = label
             continue
-        distances[ref_cell.label][distance_between_cells(ref_cell, cell)] = label
+        dist = distance_opt_between_cells(ref_cell, cell) if not do_full_gt \
+            else distance_gt_between_cells(ref_cell, cell)
+        distances[ref_cell.label][dist] = label
 
 
-def calculate_all_mutual_distances(cells: CellsStore):
+def calculate_all_mutual_distances(cells: CellsStore, do_full_gt: bool = False):
     distances: DistMatrix = {}
     for cell in cells.values():
-        distance_to_other_cells(cell, cells, distances)
+        distance_to_other_cells(cell, cells, distances, do_full_gt)
     return distances
