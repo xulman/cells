@@ -32,6 +32,10 @@ class CaseStudy:
 
 
 def store_case_study(case_study: CaseStudy):
+    print(f"Removing Numba data from CellsStore of {case_study.pickleFile}")
+    for cell in case_study.cells.values():
+        cell.surface_pixels_numba = None
+    #
     print(f"Storing case study into {case_study.pickleFile}")
     with open(case_study.pickleFile,"wb") as file:
         Pickler(file).dump(case_study)
