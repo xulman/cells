@@ -7,7 +7,7 @@ from img_processing import read_cells
 class CaseStudy:
     def __init__(self, imageFileName: str, imageSize: ImageSize):
         self.imageFile = imageFileName
-        self.imageSize = ImageSize
+        self.imageSize = imageSize
         p_from = imageFileName.rfind('/')+1
         p_end = imageFileName.rfind('.')
         self.pickleFile = imageFileName[ p_from:p_end ]+".dat"
@@ -44,4 +44,6 @@ def store_case_study(case_study: CaseStudy):
 def load_case_study(reference_case_study: CaseStudy) -> Optional[CaseStudy]:
     print(f"Loading case study from {reference_case_study.pickleFile}")
     with open(reference_case_study.pickleFile,"rb") as file:
-        return Unpickler(file).load()
+        cls: CaseStudy = Unpickler(file).load()
+        cls.imageSize = reference_case_study.imageSize
+        return cls
