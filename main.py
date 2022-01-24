@@ -89,18 +89,22 @@ def main_load():
 
 
 def main():
-    cells: CellsStore = read_cells('./data/fake_cells_3D.tif')
-    for key in sorted(cells.keys()):
-        print(cells[key])
+    cs: CaseStudy = load_case_study( create_case_study() )
 
-    # img = zeros((21,400,512), dtype=uint8) -- now intentionally 2D for vizu
-    img = zeros((1, 400, 512), dtype=uint8)
-    for cell_id in cells.keys():
-        cells[cell_id].visualize(img)
-    imsave(f"cells.tif", data=img)
+    for key in sorted(cs.cells.keys()):
+        print(cs.cells[key])
+
+    img = zeros(cs.imageSize, dtype=uint8)
+    for cell_id in cs.cells.keys():
+        cs.cells[cell_id].visualize(img)
+
+    fileName = f"augmented_cells_for_{cs.imageFile[cs.imageFile.rfind('/')+1:]}"
+    print(f"Storing image: {fileName}")
+    imsave(fileName, data=img)
 
 
 if __name__ == "__main__":
     #main_main()
-    main_save()
-    main_load()
+    #main_save()
+    #main_load()
+    main()
