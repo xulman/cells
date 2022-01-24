@@ -60,26 +60,27 @@ def main_save():
     cs = create_case_study()
 
     # "create" data
-    cells: CellsStore = read_cells(cs.imageFile)
-    for key in sorted(cells.keys()):
-        print(cells[key])
-    cs.distances = calculate_all_mutual_distances(cells,do_full_gt=False)
+    cs.calculate_cells()
+    for key in sorted(cs.cells.keys()):
+        print(cs.cells[key])
+    cs.calculate_opt_distances()
     print_distances_from_cell(cs.distances[12])
 
-    store_case_study(cs,cells)
+    store_case_study(cs)
 
 
 def main_load():
     # restore data structures from pre-saved data rather than computing anew
-    cs,cells = load_case_study( create_case_study() )
+    cs = load_case_study( create_case_study() )
 
     # test "restored" data
-    for key in sorted(cells.keys()):
-        print(cells[key])
+    for key in sorted(cs.cells.keys()):
+        print(cs.cells[key])
     print_distances_from_cell(cs.distances[12])
 
     # try to calcuate distance again
-    cs.distances = calculate_all_mutual_distances(cells,do_full_gt=False)
+    #cs.distances = calculate_all_mutual_distances(cs.cells,do_full_gt=False)
+    cs.calculate_opt_distances()
     print_distances_from_cell(cs.distances[12])
 
 
