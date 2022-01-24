@@ -4,14 +4,14 @@ from numpy import uint8, ndarray, zeros
 from tifffile.tifffile import imsave
 from case_study import CaseStudy, load_case_study, store_case_study
 
-from cell import CellsStore, DistancesToCells, DistMatrix, PixelNativeList
+from cell import CellsStore, DistancesToCellsWithEnergies, DistMatrix, PixelNativeList
 from distance_calculating import calculate_all_mutual_distances, get_border_pixels_between_cells
 from img_processing import read_cells
 
 
-def print_distances_from_cell(dist: DistancesToCells):
+def print_distances_from_cell(dist: DistancesToCellsWithEnergies):
     for d in sorted(dist):
-        print(f" -> after {d} pixels is cell id {dist[d]}")
+        print(f" -> after {d} pixels is cell id {dist[d][0]}, measurement price {dist[d][1]}")
 
 
 def write_boundaries(pixels: PixelNativeList, label: int, img: ndarray):
