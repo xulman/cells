@@ -13,6 +13,11 @@ def print_distances_from_cell(dist: DistancesToCellsWithEnergies):
     for d in sorted(dist):
         print(f" -> after {d} pixels is cell id {dist[d][0]}, measurement price {dist[d][1]}")
 
+def print_distances_matrix(dists: DistMatrix):
+    for cell_id,dist in dists.items():
+        print(f"Distances from cell {cell_id} to other {len(dist)} cells:")
+        print_distances_from_cell(dist)
+
 
 def write_boundaries(pixels: PixelNativeList, label: int, img: ndarray):
     for x, y, z in pixels:
