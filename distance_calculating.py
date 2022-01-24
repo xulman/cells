@@ -72,7 +72,7 @@ def distance_opt_between_cells(fst: Cell, snd: Cell) -> DistanceAndEnergy:
 def distance_gt_between_cells(fst: Cell, snd: Cell) -> DistanceAndEnergy:
     centroid_distance = distance(fst.centroid, snd.centroid)
     fst_border, snd_border = get_full_border_pixels_between_cells(fst, snd)
-    gt_min_distance,E = distance_between_contours(fst_border, snd_border, centroid_distance)
+    gt_min_distance,E = distance_between_contours(fst_border, snd_border, centroid_distance,skip_step=1)
     return round(gt_min_distance),E
 
 

@@ -62,16 +62,10 @@ def create_case_study():
 
 def main_save():
     cs = create_case_study()
-
-    # "create" data
-    cs.calculate_cells()
-    for key in sorted(cs.cells.keys()):
-        print(cs.cells[key])
-    cs.calculate_opt_distances()
-    print_distances_from_cell(cs.distances[12])
-
+    cs.calculate_gt_distances()
     store_case_study(cs)
-
+    #
+    print_distances_matrix(cs.distances_gt)
 
 def main_load():
     # restore data structures from pre-saved data rather than computing anew
@@ -103,4 +97,3 @@ def main():
 if __name__ == "__main__":
     #main_main()
     main_save()
-    main_load()
