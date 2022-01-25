@@ -6,7 +6,7 @@ from case_study import CaseStudy, load_case_study, store_case_study
 
 from cell import CellsStore, CellsToDistancesWithEnergies, DistMatrix, PixelNativeList
 from distance_calculating import calculate_all_mutual_distances, get_border_pixels_between_cells
-from error_measures import count_distances_outside_tolerance_treshold, count_distances_outside_tolerance_treshold__study
+from error_measures import count_distances_outside_tolerance_treshold, count_distances_outside_tolerance_treshold__study, count_rank_mismatches
 from img_processing import read_cells
 
 def print_distances_from_cell(dist: CellsToDistancesWithEnergies):
@@ -114,8 +114,10 @@ def main_evaluating():
         print(f"Tested distances from the cell {ref_cell}:")
         print_distances_from_cell(cs.distances[ref_cell])
 
-        print(f"number of diffences (given the tolerance of {tolerance_thres} pixels) is "\
+        print(f"number of dist. diffences (given the tolerance of {tolerance_thres} pixels) is "\
             f"{count_distances_outside_tolerance_treshold(cs.distances[ref_cell],cs.distances_gt[ref_cell],tolerance=tolerance_thres)}")
+        print(f"number of rank diffences is "\
+            f"{count_rank_mismatches(cs.distances[ref_cell],cs.distances_gt[ref_cell])}")
         print("-------------------------")
     print(f"total number of issues is {count_distances_outside_tolerance_treshold__study(cs,tolerance=tolerance_thres)}")
 
