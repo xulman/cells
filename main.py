@@ -6,6 +6,7 @@ from case_study import CaseStudy, load_case_study, store_case_study
 
 from cell import CellsStore, CellsToDistancesWithEnergies, DistMatrix, PixelNativeList
 from distance_calculating import calculate_all_mutual_distances, get_border_pixels_between_cells
+from error_measures import count_distances_outside_tolerance_treshold, count_distances_outside_tolerance_treshold__study
 from img_processing import read_cells
 
 def print_distances_from_cell(dist: CellsToDistancesWithEnergies):
@@ -102,9 +103,24 @@ def main():
     print(f"Storing image: {fileName}")
     imsave(fileName, data=img)
 
+def main_evaluating():
+    cs: CaseStudy = load_case_study( create_case_study() )
+    cs.calculate_opt_distances()  # adds the missing calculation...
+
+    tolerance_thres = 0
+    for ref_cell in cs.cells:
+        print(f"Reference distances from the cell {ref_cell}:")
+        print_distances_from_cell(cs.distances_gt[ref_cell])
+        print(f"Tested distances from the cell {ref_cell}:")
+        print_distances_from_cell(cs.distances[ref_cell])
+
+        print(f"number of diffences (given the tolerance of {tolerance_thres} pixels) is "\
+            f"{count_distances_outside_tolerance_treshold(cs.distances[ref_cell],cs.distances_gt[ref_cell],tolerance=tolerance_thres)}")
+        print("-------------------------")
+    print(f"total number of issues is {count_distances_outside_tolerance_treshold__study(cs,tolerance=tolerance_thres)}")
 
 if __name__ == "__main__":
     #main_main()
-    #main_save()
+    #main_save(\)"
     #main_load()
-    main()
+    main_evaluating()
