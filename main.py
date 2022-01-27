@@ -122,7 +122,9 @@ def main_evaluating():
     print(f"total number of issues is {count_distances_outside_tolerance_treshold__study(cs,tolerance=tolerance_thres)}")
 
 if __name__ == "__main__":
-    #main_main()
+    #main()
+    main_main()
     #main_save(\)"
     #main_load()
-    main_evaluating()
+    #main_evaluating()
+
