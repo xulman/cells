@@ -1,6 +1,6 @@
 import pickle
 
-from cells.processing.distance_calculating import calculate_all_mutual_distances
+from cells.processing.distance_calculating import calculate_mutual_distances
 
 study = None
 
@@ -22,7 +22,7 @@ def load_study():
     global study
     with open("pickle_files/masks_3D.dat", "rb") as file:
         study = pickle.Unpickler(file).load()
-    study.distances = calculate_all_mutual_distances(study.cells)
+    study.distances = calculate_mutual_distances(study.cells)
 
 
 def avg_distance_diff(study):

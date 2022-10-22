@@ -1,18 +1,7 @@
 import numpy
-from numba.typed import List
-from utils import distance, Coords
 
-# reference types
-ImageSize = tuple[int, int, int]
-PixelNativeList = list[Coords]
-PixelNumbaList = List[Coords]
-
-Distance = int
-Label = int
-DistanceAndEnergy = tuple[Distance, int]  # actual_distance, number_of_pixel_pairs_examined
-CellsToDistances = dict[Label, Distance]  # otherCellId -> distance+energy
-DistMatrix = dict[Label, CellsToDistances]  # cell -> (otherCell -> (distance,energy))
-# CellsStore type is defined below (after the class itself)
+from cells.types import PixelNativeList, Coords, PixelNumbaList
+from utils import distance
 
 
 class Cell:
@@ -79,5 +68,4 @@ def points_on_sphere(centre: Coords, radius: float, value: int, img: numpy.ndarr
     points_on_circle(centre, radius, value, img)
 
 
-# one more reference type
-CellsStore = dict[int, Cell]
+

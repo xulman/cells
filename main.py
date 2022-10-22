@@ -5,7 +5,7 @@ from tifffile.tifffile import imsave
 from case_study import CaseStudy, load_case_study, store_case_study
 
 from cells.processing.cell import CellsStore, CellsToDistancesWithEnergies, DistMatrix, PixelNativeList
-from cells.processing.distance_calculating import calculate_all_mutual_distances, border_pixels_between_cells
+from cells.processing.distance_calculating import calculate_mutual_distances, border_pixels_between_cells
 from error_measures import count_distances_outside_tolerance_treshold, count_distances_outside_tolerance_treshold__study, count_rank_mismatches
 from cells.processing.img_processing import read_cells
 
@@ -35,7 +35,7 @@ def main_main():
     print(t2 - t1)
 
     print("Calculating distances")
-    distances: DistMatrix = calculate_all_mutual_distances(cells)
+    distances: DistMatrix = calculate_mutual_distances(cells)
     print(datetime.datetime.now() - t2)
 
     # REPORTING

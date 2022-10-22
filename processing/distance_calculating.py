@@ -1,34 +1,46 @@
 from numba import jit
 from numba.typed import List
 
-from cells.processing.cell import Cell, CellsStore, PixelNumbaList, DistMatrix, CellsToDistances, Distance
+from cells.types import Cell, CellsStore, PixelNumbaList, DistMatrix, CellsToDistances, Distance, CellPriorityList, \
+    CellPriorityMatrix, Label
 from utils import distance
 from cells.config import CFG
 
 
-def calculate_all_mutual_distances(cells: CellsStore):
+def calculate_mutual_distances(cells: CellsStore, cell_priority_matrix: CellPriorityMatrix):
     """
     Return distance matrix with format: { cell_label : [{cell_label : (distance, energy)},...] }
+    If priority matrix is present - distance matrix won't be full, it will be limited only to
     """
     distances: DistMatrix = {}
-    for cell in cells.values():
-        distance_to_other_cells(cells, cell, distances)
+    for label in cells.keys():
+        cell_priority_list = []
+        if cell_priority_matrix is not None:
+            limit_to = round(CFG["closest_count"] * CFG["limiting_coefficient"])
+            cell_priority_list = cell_priority_matrix[label][:limit_to]
+        distance_to_other_cells(cells, label, distances, cell_priority_list)
     return distances
 
 
-def distance_to_other_cells(cells: CellsStore, ref_cell: Cell, distances: DistMatrix) -> None:
+def distance_to_other_cells(cells: CellsStore, ref_label: Label, distances: DistMatrix, cell_priority_list: CellPriorityList) -> None:
     """
     Fill distance matrix with distances from ref_cell to others.
+    If priorities are set - will fill distances only to cells from list
     """
-    distances[ref_cell.label]: CellsToDistances = {}
+    distances[ref_label]: CellsToDistances = {}
     for label, cell in cells.items():
-        if label == ref_cell.label:  # don't store the distance to itself
+        # don't store the distance to itself
+        if label == ref_label:
             continue
-        if label in distances:  # was computed before?
-            distances[ref_cell.label][label] = distances[label][ref_cell.label]
+        # don't recompute computed distances
+        if label in distances:
+            distances[ref_label][label] = distances[label][ref_label]
             continue
-        dist = distance_between_cells(ref_cell, cell)
-        distances[ref_cell.label][label] = dist
+        # if priority list is present - compute distance only to cells from it
+        if cell_priority_list is not [] and label not in cell_priority_list:
+            continue
+        dist = distance_between_cells(cells[ref_label], cell)
+        distances[ref_label][label] = dist
 
 
 def distance_between_cells(fst: Cell, snd: Cell) -> Distance:

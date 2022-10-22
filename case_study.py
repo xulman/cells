@@ -1,7 +1,9 @@
 from pickle import Pickler, Unpickler
 from typing import Optional
+
+from cells.config import CFG
 from cells.processing.cell import CellsStore, DistMatrix, ImageSize
-from cells.processing.distance_calculating import calculate_all_mutual_distances
+from cells.processing.distance_calculating import calculate_mutual_distances
 from cells.processing.img_processing import read_cells
 
 
@@ -24,12 +26,16 @@ class CaseStudy:
     def calculate_opt_distances(self):
         if self.cells is None:
             self.calculate_cells()
-        self.distances = calculate_all_mutual_distances(self.cells)
+        old_precise, CFG["precise"] = CFG["precise"], False
+        self.distances = calculate_mutual_distances(self.cells)
+        CFG["precise"] = old_precise
 
     def calculate_gt_distances(self):
         if self.cells is None:
             self.calculate_cells()
-        self.distances_gt = calculate_all_mutual_distances(self.cells)
+        old_precise, CFG["precise"] = CFG["precise"], True
+        self.distances_gt = calculate_mutual_distances(self.cells)
+        CFG["precise"] = old_precise
 
 
 def store_case_study(case_study: CaseStudy):
