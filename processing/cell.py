@@ -7,9 +7,11 @@ ImageSize = tuple[int, int, int]
 PixelNativeList = list[Coords]
 PixelNumbaList = List[Coords]
 
-DistanceAndEnergy = tuple[int, int]  # actual_distance, number_of_pixel_pairs_examined
-CellsToDistancesWithEnergies = dict[int, DistanceAndEnergy]  # otherCellId -> distance+energy
-DistMatrix = dict[int, CellsToDistancesWithEnergies]  # cell -> (otherCell -> (distance,energy))
+Distance = int
+Label = int
+DistanceAndEnergy = tuple[Distance, int]  # actual_distance, number_of_pixel_pairs_examined
+CellsToDistances = dict[Label, Distance]  # otherCellId -> distance+energy
+DistMatrix = dict[Label, CellsToDistances]  # cell -> (otherCell -> (distance,energy))
 # CellsStore type is defined below (after the class itself)
 
 

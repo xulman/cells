@@ -1,6 +1,6 @@
 from ctypes import ArgumentError
 from case_study import CaseStudy
-from cell import CellsToDistancesWithEnergies, DistMatrix
+from cells.processing.cell import CellsToDistancesWithEnergies, DistMatrix
 
 def count_distances_outside_tolerance_treshold(test: CellsToDistancesWithEnergies, ref: CellsToDistancesWithEnergies, tolerance: int):
     if len(test) != len(ref):

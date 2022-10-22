@@ -1,6 +1,6 @@
 from collections import defaultdict
 from tifffile import imread
-from cell import Cell, CellsStore, ImageSize, Coords
+from cells.processing.cell import Cell, CellsStore, ImageSize, Coords
 
 
 def read_cells(image_address) -> CellsStore:

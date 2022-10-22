@@ -1,16 +1,17 @@
 from pickle import Pickler, Unpickler
 from typing import Optional
-from cell import CellsStore, DistMatrix, ImageSize
-from distance_calculating import calculate_all_mutual_distances
-from img_processing import read_cells
+from cells.processing.cell import CellsStore, DistMatrix, ImageSize
+from cells.processing.distance_calculating import calculate_all_mutual_distances
+from cells.processing.img_processing import read_cells
+
 
 class CaseStudy:
     def __init__(self, imageFileName: str, imageSize: ImageSize):
         self.imageFile = imageFileName
         self.imageSize = imageSize
-        p_from = imageFileName.rfind('/')+1
+        p_from = imageFileName.rfind('/') + 1
         p_end = imageFileName.rfind('.')
-        self.pickleFile = imageFileName[ p_from:p_end ]+".dat"
+        self.pickleFile = f"pickle_files/{imageFileName[p_from:p_end]}.dat"
 
         self.cells: CellsStore = None
         self.distances_gt: DistMatrix = None
@@ -23,12 +24,12 @@ class CaseStudy:
     def calculate_opt_distances(self):
         if self.cells is None:
             self.calculate_cells()
-        self.distances = calculate_all_mutual_distances(self.cells,do_full_gt=False)
+        self.distances = calculate_all_mutual_distances(self.cells)
 
     def calculate_gt_distances(self):
         if self.cells is None:
             self.calculate_cells()
-        self.distances_gt = calculate_all_mutual_distances(self.cells,do_full_gt=True)
+        self.distances_gt = calculate_all_mutual_distances(self.cells)
 
 
 def store_case_study(case_study: CaseStudy):
@@ -37,13 +38,13 @@ def store_case_study(case_study: CaseStudy):
         cell.surface_pixels_numba = None
     #
     print(f"Storing case study into {case_study.pickleFile}")
-    with open(case_study.pickleFile,"wb") as file:
+    with open(case_study.pickleFile, "wb") as file:
         Pickler(file).dump(case_study)
 
 
 def load_case_study(reference_case_study: CaseStudy) -> Optional[CaseStudy]:
     print(f"Loading case study from {reference_case_study.pickleFile}")
-    with open(reference_case_study.pickleFile,"rb") as file:
+    with open(reference_case_study.pickleFile, "rb") as file:
         cls: CaseStudy = Unpickler(file).load()
         cls.imageSize = reference_case_study.imageSize
         return cls

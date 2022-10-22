@@ -4,10 +4,10 @@ from numpy import uint8, ndarray, zeros
 from tifffile.tifffile import imsave
 from case_study import CaseStudy, load_case_study, store_case_study
 
-from cell import CellsStore, CellsToDistancesWithEnergies, DistMatrix, PixelNativeList
-from distance_calculating import calculate_all_mutual_distances, get_border_pixels_between_cells
+from cells.processing.cell import CellsStore, CellsToDistancesWithEnergies, DistMatrix, PixelNativeList
+from cells.processing.distance_calculating import calculate_all_mutual_distances, border_pixels_between_cells
 from error_measures import count_distances_outside_tolerance_treshold, count_distances_outside_tolerance_treshold__study, count_rank_mismatches
-from img_processing import read_cells
+from cells.processing.img_processing import read_cells
 
 def print_distances_from_cell(dist: CellsToDistancesWithEnergies):
     for d in sorted(dist, key=lambda k: dist[k][0]):
@@ -45,7 +45,7 @@ def main_main():
 
     # SHOWING
     otherCellLabel = 36
-    rl, ol = get_border_pixels_between_cells(cells[refCellLabel], cells[otherCellLabel])
+    rl, ol = border_pixels_between_cells(cells[refCellLabel], cells[otherCellLabel])
     img = zeros((100, 200, 300), dtype=uint8)
     write_boundaries(rl, refCellLabel, img)
     write_boundaries(ol, otherCellLabel, img)
