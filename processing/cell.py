@@ -1,7 +1,12 @@
 import numpy
+from numba.typed import List
 
-from cells.types import PixelNativeList, Coords, PixelNumbaList
-from utils import distance
+from cells.processing.utils import distance
+
+
+Coords = tuple[int, int, int]
+PixelNativeList = list[Coords]
+PixelNumbaList = List[Coords]
 
 
 class Cell:

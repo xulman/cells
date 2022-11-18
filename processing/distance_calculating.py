@@ -3,7 +3,7 @@ from numba.typed import List
 
 from cells.types import Cell, CellsStore, PixelNumbaList, DistMatrix, CellsToDistances, Distance, CellPriorityList, \
     CellPriorityMatrix, Label
-from utils import distance
+from cells.processing.utils import distance
 from cells.config import CFG
 
 
@@ -33,7 +33,7 @@ def distance_to_other_cells(cells: CellsStore, ref_label: Label, distances: Dist
         if label == ref_label:
             continue
         # don't recompute computed distances
-        if label in distances:
+        if label in distances and ref_label in distances[label]:
             distances[ref_label][label] = distances[label][ref_label]
             continue
         # if priority list is present - compute distance only to cells from it
@@ -49,7 +49,7 @@ def distance_between_cells(fst: Cell, snd: Cell) -> Distance:
     """
     centroid_distance = distance(fst.centroid, snd.centroid)
     fst_border, snd_border = border_pixels_between_cells(fst, snd)
-    min_distance = distance_between_borders(fst_border, snd_border, centroid_distance)
+    min_distance = distance_between_borders(fst_border, snd_border, centroid_distance, skip_step=CFG["skip_step"])
     return round(min_distance)
 
 
@@ -90,11 +90,10 @@ def border_pixels_between_cells(fst: Cell, snd: Cell) -> tuple[PixelNumbaList, P
 
 
 @jit
-def distance_between_borders(fst_border: PixelNumbaList, snd_border: PixelNumbaList, centroid_distance) -> Distance:
+def distance_between_borders(fst_border: PixelNumbaList, snd_border: PixelNumbaList, centroid_distance, skip_step=1) -> Distance:
     """
     Calculates distance between two selected borders.
     """
-    skip_step = CFG["skip_step"]
     min_distance = centroid_distance
     fst_b = fst_border[::skip_step]
     snd_b = snd_border[::skip_step]
