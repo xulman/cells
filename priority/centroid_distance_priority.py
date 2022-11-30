@@ -1,8 +1,9 @@
 from cells.processing.utils import distance
-from cells.types import CellsStore, CellPriorityMatrix
+from cells.project_types import CellsStore, CellPriorityMatrix
 
 
 def calculate_priorities(cells: CellsStore):
+    # NOTE: this could be optimised by re-using calculated distances, but it seems unnecessary as it wouldn't save that much computation time.
     priorities: CellPriorityMatrix = {}
 
     for current_label in cells.keys():
@@ -19,4 +20,3 @@ def calculate_priorities(cells: CellsStore):
         # Extract only labels
         priorities[current_label] = list(map(lambda x: x[1],  distances_from_current))
     return priorities
-# NOTE: this could be optimised by re-using calculated distances, but it seems unnecessary as it wouldn't save that much computation time.

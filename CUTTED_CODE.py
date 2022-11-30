@@ -1,5 +1,5 @@
 from cells.config import CFG
-from cells.processing.distance_calculating import border_pixels_between_cells, distance_between_cells
+from cells.processing.border_distance import border_pixels_between_cells, distance_between_cells
 from copy import copy
 
 
@@ -30,7 +30,7 @@ def log_difference_between_optimal_and_precise():
     from case_study import CaseStudy, load_case_study, store_case_study
 
     from cells.processing.cell import CellsStore, CellsToDistancesWithEnergies, DistMatrix, PixelNativeList
-    from cells.processing.distance_calculating import calculate_mutual_distances, border_pixels_between_cells
+    from cells.processing.border_distance import calculate_mutual_distances, border_pixels_between_cells
     from error_measures import count_distances_outside_tolerance_treshold, count_distances_outside_tolerance_treshold__study, count_rank_mismatches
     from cells.processing.img_processing import read_cells
 

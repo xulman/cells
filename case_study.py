@@ -3,7 +3,7 @@ from typing import Optional
 
 from cells.config import CFG
 from cells.processing.cell import CellsStore, DistMatrix, ImageSize
-from cells.processing.distance_calculating import calculate_mutual_distances
+from cells.processing.border_distance import calculate_mutual_distances
 from cells.processing.img_processing import read_cells
 
 

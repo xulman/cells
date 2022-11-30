@@ -1,6 +1,6 @@
 import pickle
 
-from cells.processing.distance_calculating import calculate_mutual_distances
+from cells.processing.border_distance import calculate_mutual_distances
 
 study = None
 
