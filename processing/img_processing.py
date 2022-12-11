@@ -1,6 +1,7 @@
 from collections import defaultdict
 from tifffile import imread
 
+from cells.distance_transform.distance_transform import create_distance_graph
 from cells.project_types import Cell, CellsStore, ImageSize, Coords, Image, Label
 
 

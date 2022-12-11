@@ -80,7 +80,7 @@ def log_difference_between_optimal_and_precise():
     def create_case_study():
         #return CaseStudy('./data/masks_2D.tif',   [1,922,922])
         #return CaseStudy('./data/masks_3D.tif', [100,922,922])
-        #return CaseStudy('./data/masks_3D_small.tif', [100,200,250])
+        #return CaseStudy('./data/masks_small_3D.tif', [100,200,250])
 
         return CaseStudy('./data/fake_cells_2D.tif',  [1,400,512])
         #return CaseStudy('./data/fake_cells_3D.tif', [21,400,512])

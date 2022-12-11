@@ -8,11 +8,13 @@ from cells.config import CFG
 
 def distance_between_cells(fst: Cell, snd: Cell) -> Distance:
     """
-    Compute distance and energy between two cells using optimal strategy
+    Compute distance between two cells
     """
     centroid_distance = distance(fst.centroid, snd.centroid)
     fst_border, snd_border = border_pixels_between_cells(fst, snd)
     min_distance = distance_between_borders(fst_border, snd_border, centroid_distance, skip_step=CFG["skip_step"])
+    # print(f"Difference between {fst.label}({len(fst.surface_pixels)}), {snd.label}({len(snd.surface_pixels)}): {len(fst.surface_pixels) - len(fst_border)}, {len(snd.surface_pixels) - len(snd_border)}")
+    # CFG["data_list"].append((len(fst_border) // CFG["skip_step"]) * (len(snd_border) // CFG["skip_step"]))
     return round(min_distance)
 
 
@@ -36,7 +38,7 @@ def border_pixels_between_cells(fst: Cell, snd: Cell) -> tuple[PixelNumbaList, P
         snd_border: PixelNumbaList = List()
         # magic happens here
         modifier = 0.15 if centroid_distance > (fst.avg_radius * 2) and centroid_distance > (
-                    snd.avg_radius * 2) else 0.30
+                    snd.avg_radius * 2) else 0.5
         fst_compare_distance = centroid_distance - fst.avg_radius * (1 / ((fst.roundness + modifier) ** 3))
         snd_compare_distance = centroid_distance - snd.avg_radius * (1 / ((snd.roundness + modifier) ** 3))
 

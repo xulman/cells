@@ -71,6 +71,3 @@ def points_on_circle(centre: Coords, radius: float, value: int, img: numpy.ndarr
 def points_on_sphere(centre: Coords, radius: float, value: int, img: numpy.ndarray):
     # TBA... for now:
     points_on_circle(centre, radius, value, img)
-
-
-
